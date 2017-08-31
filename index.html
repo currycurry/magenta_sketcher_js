@@ -1,22 +1,31 @@
-<html>
-<head>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.5/dat.gui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.11.4/paper-full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/0.10.0/Tone.js"></script>
-    <script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.8.0/dist/protobuf.min.js"></script>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  margin: 0;
+  background: linear-gradient(to bottom, #000099 0%, #ff99cc 100%);
+  min-width: 960px;
+}
+
+rect {
+  fill: #282828;
+  pointer-events: all;
+}
+
+.line { 
+  stroke: white;
+  stroke-width: 4;
+  stroke-linejoin: round;
+  fill: none;
+}
 
 
-	<style>
-	body {
-	    margin: 0px;
-	}
-	</style>
-</head>
+
+</style>
 <body>
-	<canvas id="myCanvas" width="800" height="800"></canvas>
-	<div class="canvas"></div>
-</body>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="js/dat.gui.js"></script>
 
-<script type="text/paperscript" src="js/main.js" canvas="myCanvas"></script>
-</html>
+<script src="js/main.js"></script>
+<script src="js/simplify.js"></script>
