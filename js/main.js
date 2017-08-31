@@ -2,7 +2,8 @@ var width = Math.max(960, innerWidth),
     height = Math.max(500, innerHeight);
 
 var margin = 10;
-var container_width = width / 2 - 2 * margin;
+var gui_margin = 150;
+var container_width = width / 2 - 2 * margin - gui_margin;
 var container_height = container_width * .75;
 var matrix;
 var offColor = '#686868';
@@ -29,7 +30,7 @@ var sketch_container = d3.select("svg").append("svg")
 var matrix_container = d3.select("svg").append("svg")
   .attr("width", width / 2)
   .attr("height", width / 2 * .75 )
-  .attr("x", width / 2 );
+  .attr("x", container_width + 2 * margin);
 
 sketch_container.append("rect")
     .attr("width", container_width)
@@ -143,15 +144,22 @@ function handleEndDrawing() {
 var params = {
   bars : 4,
   erase : false,
-  loop : true
+  save : false,
+  clear : false,
+  num_hits : 16,
+  num_notes : 10
 };
 
 function initGui() {
-  var gui = new dat.GUI();
-  gui.remember(params);
+  var gui = new dat.GUI( );
+  //gui.remember(params);
   gui.add(params, 'bars', 1, 8).listen();
   gui.add(params, 'erase');
-  gui.add(params, 'loop');
+  gui.add(params, 'save');
+  gui.add(params, 'clear');
+  gui.add(params, 'num_hits', 4, 128);
+  gui.add(params, 'num_notes', 5, 40);
+
 }
 
 initGui();
