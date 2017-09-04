@@ -16,7 +16,6 @@ var cell_width = ( container_width - cell_margin * ( num_hits + 1 ) ) / num_hits
 var cell_height =  ( container_height - cell_margin * ( num_notes + 1 ) ) / num_notes;
 var bDrawing = false;
 
-var matrixData = matrixData();
 //console.log( matrixData );
 
 var svg = d3.select("body").append("svg")
@@ -31,22 +30,57 @@ var sketch_container = d3.select("svg").append("svg")
   .on("mouseup", handleEndDrawingUp )
   .on("mouseleave", handleEndDrawingOut );
 
+function initSketch() {
+  sketch_container.append("rect")
+    .attr("width", container_width)
+    .attr("height", container_height)
+    .attr("x", margin)
+    .attr("y", margin);
+}
+initSketch();
+
 var matrix_container = d3.select("svg").append("svg")
   .attr("width", width / 2)
   .attr("height", width / 2 * .75 )
   .attr("x", container_width + 2 * margin);
 
-sketch_container.append("rect")
+var matrixData;
+var row, column;
+function initMatrix() {
+  matrix_container.append("rect")
     .attr("width", container_width)
     .attr("height", container_height)
     .attr("x", margin)
     .attr("y", margin);
 
-matrix_container.append("rect")
-    .attr("width", container_width)
-    .attr("height", container_height)
-    .attr("x", margin)
-    .attr("y", margin);
+  row = matrix_container.selectAll(".row")
+    .data(matrixData)
+    .enter().append("g")
+    .attr("class", "row");
+    
+  column = row.selectAll(".cell")
+    .data(function(d) { return d; })
+    .enter().append("rect")
+    .attr("class","cell")
+    .attr("x", function(d) { return d.x; })
+    .attr("y", function(d) { return d.y; })
+    .attr("width", function(d) { return d.width; })
+    .attr("height", function(d) { return d.height; })
+    .style("fill", offColor )
+    .style("stroke", offColor )
+    .on('click', function(d) {
+       d.pressed = !d.pressed;
+       if ( d.pressed ) {
+          d3.select(this).style("fill", onColor );
+          d3.select(this).style("stroke", onColor );
+       }
+       else {
+          d3.select(this).style("fill", offColor );
+          d3.select(this).style("stroke", offColor );
+       }
+    });
+}
+initMatrix();
 
 function matrixData() {
     var matrix = new Array();
@@ -78,33 +112,6 @@ function matrixData() {
     return matrix;
 }
   
-var row = matrix_container.selectAll(".row")
-  .data(matrixData)
-  .enter().append("g")
-  .attr("class", "row");
-  
-var column = row.selectAll(".cell")
-  .data(function(d) { return d; })
-  .enter().append("rect")
-  .attr("class","cell")
-  .attr("x", function(d) { return d.x; })
-  .attr("y", function(d) { return d.y; })
-  .attr("width", function(d) { return d.width; })
-  .attr("height", function(d) { return d.height; })
-  .style("fill", offColor )
-  .style("stroke", offColor )
-  .on('click', function(d) {
-     d.pressed = !d.pressed;
-     if ( d.pressed ) {
-        d3.select(this).style("fill", onColor );
-        d3.select(this).style("stroke", onColor );
-     }
-     else {
-        d3.select(this).style("fill", offColor );
-        d3.select(this).style("stroke", offColor );
-     }
-    });
-
 // active line drawing
 var ptdata = [];
 var session = [];
@@ -145,25 +152,6 @@ function sketch() {
   }
 }
 
-var erase_radius = 15;
-
-function erase( m_pos ) {
-  console.log( "in erase function: " + m_pos );
-  if ( m_pos[ 0 ] > margin + erase_radius && m_pos[ 0 ] < margin + container_width - erase_radius ) {
-    if ( m_pos[ 1 ] > margin + erase_radius && m_pos[ 1 ] < margin + container_height - erase_radius ) {
-      sketch_container.insert('circle')
-      .attr("cx", m_pos[0])
-      .attr("cy", m_pos[1])
-      .attr("r", erase_radius)
-      .style("stroke", '#282828')
-      .style("fill", '#282828')
-      .style("stroke-opacity", 1);
-    }
-  }
-
-  //bDrawing = true;
-}
-
 function handleEndDrawingUp() {
   console.log("endDrawing up called");
   if ( bDrawing ){
@@ -190,6 +178,23 @@ function handleEndDrawingOut() {
   } 
 }
 
+var erase_radius = 15;
+function erase( m_pos ) {
+  console.log( "in erase function: " + m_pos );
+  if ( m_pos[ 0 ] > margin + erase_radius && m_pos[ 0 ] < margin + container_width - erase_radius ) {
+    if ( m_pos[ 1 ] > margin + erase_radius && m_pos[ 1 ] < margin + container_height - erase_radius ) {
+      sketch_container.insert('circle')
+      .attr("cx", m_pos[0])
+      .attr("cy", m_pos[1])
+      .attr("r", erase_radius)
+      .style("stroke", '#282828')
+      .style("fill", '#282828')
+      .style("stroke-opacity", 1);
+    }
+  }
+}
+
+/////////////////////
 // initialize the gui
 var params = {
   bars : 4,
@@ -212,12 +217,11 @@ function initGui() {
     console.log("clear:  ", newValue);
     if ( newValue == true ) {
       sketch_container.selectAll("*").remove();
-      sketch_container.append("rect")
-      .attr("width", container_width)
-      .attr("height", container_height)
-      .attr("x", margin)
-      .attr("y", margin);
+      initSketch();
+      matrix_container.selectAll("*").remove();
+      initMatrix();
       params.clear = false;
+
     }
   });
   gui.add(params, 'num_hits', 4, 128);
