@@ -27,9 +27,9 @@ var sketch_container = d3.select("svg").append("svg")
   .attr("width", width / 2)
   .attr("height", width / 2 * .75 )    
   .on("mousedown", handleStartDrawing )
-    .on("mousemove", sketch )
-    .on("mouseup", handleEndDrawingUp )
-    .on("mouseleave", handleEndDrawingOut );
+  .on("mousemove", sketch )
+  .on("mouseup", handleEndDrawingUp )
+  .on("mouseleave", handleEndDrawingOut );
 
 var matrix_container = d3.select("svg").append("svg")
   .attr("width", width / 2)
@@ -216,11 +216,7 @@ function initGui() {
       .attr("width", container_width)
       .attr("height", container_height)
       .attr("x", margin)
-      .attr("y", margin)
-      .on("mousedown", handleStartDrawing)
-      .on("mousemove", sketch )
-      .on("mouseup", handleEndDrawingUp )
-      .on("mouseleave", handleEndDrawingOut );
+      .attr("y", margin);
       params.clear = false;
     }
   });
